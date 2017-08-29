@@ -33,9 +33,13 @@ autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable hg bzr git
 zstyle ':vcs_info:*:*' unstagedstr '!'
 zstyle ':vcs_info:*:*' stagedstr '+'
-zstyle ':vcs_info:*:*' formats "$FX[bold]%r$FX[no-bold]/%S" "%s/%b" "%%u%c"
+zstyle ':vcs_info:*:*' formats "$FX[bold]%R $FX[no-bold]/%S" "%s/%b" "%%u%c"
 zstyle ':vcs_info:*:*' actionformats "$FX[bold]%r$FX[no-bold]/%S" "%s/%b" "%u%c (%a)"
 zstyle ':vcs_info:*:*' nvcsformats "%~" "" ""
+zstyle ':vcs_info:*+set-message:*' hooks home-path
+function +vi-home-path() {
+    hook_com[base]="${hook_com[base]/$HOME/~}"
+}
 
 # Fastest possible way to check if repo is dirty
 #
@@ -49,7 +53,7 @@ git_dirty() {
 # Display information about the current repository
 #
 repo_information() {
-    echo "%F{blue}${vcs_info_msg_0_%%/.} %F{8}$vcs_info_msg_1_`git_dirty` $vcs_info_msg_2_%f"
+    echo "%F{green}${vcs_info_msg_0_%%/.} %F{8}$vcs_info_msg_1_`git_dirty` $vcs_info_msg_2_%f"
 }
 
 # Displays the exec time of the last command if set threshold was exceeded
@@ -58,7 +62,7 @@ cmd_exec_time() {
     local stop=`date +%s`
     local start=${cmd_timestamp:-$stop}
     let local elapsed=$stop-$start
-    [ $elapsed -gt 5 ] && echo ${elapsed}s
+#    [ $elapsed -gt 5 ] && echo ${elapsed}s
 }
 
 # Get the initial timestamp for cmd_exec_time
@@ -76,7 +80,7 @@ precmd() {
 
 # Define prompts
 #
-PROMPT="%(?.%F{magenta}.%F{red})❯%f " # Display a red prompt char on failure
+PROMPT="%(?.%F{magenta}.%F{magenta})❯%f " # Display a red prompt char on failure
 RPROMPT="%F{8}${SSH_TTY:+%n@%m}%f"    # Display username if connected via SSH
 
 # ------------------------------------------------------------------------------
